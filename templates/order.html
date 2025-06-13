@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation!</title>
+    <link rel="stylesheet" href="../static/order.css">
+</head>
+<body>
+    <header>
+        <h2>Order confirmation for {{ user_name }}</h2>
+    </header>
+
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Last Name</th>
+                    <th>Order Number</th>
+                    <th>Email Address</th>
+                    <th>Payment Method</th>
+                    <th>Order Details</th>
+                    <th>Time ordered</th>
+                    <th>Estimated Arrival Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ user_name }}</td>
+                    <td>{{ last_name }}</td>
+                    <td>{{ order_number }}</td>
+                    <td>{{ email }}</td>
+                    <td>{{ payment_method }}</td>
+                    <td>{{order_details}}</td>
+                    <td><time>{{time_ordered}}</time></td>
+                    <td><time>{{ time }}</time></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+                        <p>To modify or cancel, please contact <a href="/resto.html#Contact">customer support</a>.</p>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </main>
+</body>
+</html>

@@ -1,0 +1,362 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; // vertically centers the text in the header
+  padding: 15px 30px;
+  background: linear-gradient(to right, rgb(35, 93, 104), rgb(22, 57, 65));
+  font-size: 25px;
+  color: white;
+  border-radius: 15px;
+
+  p {
+    margin: 0; // remove default spacing
+    font-weight: bold;
+  }
+
+  nav {
+    display: flex;
+    gap: 20px; // space between links
+
+    a {
+      padding: 10px 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+        font-size: larger;
+        text-shadow: #869126;
+      }
+    }
+  }
+}
+main {
+  background-color: #869126;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 100vw;
+  #menu {
+  display: block;
+  width: 100%; /* Take the full width of the viewport */
+  margin: 0;
+  padding: 20px;
+  background-color: #869126;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+  #hero {
+    display: grid;
+    grid-template: 950px / 0.99fr 0.01fr;
+    background-image: url('back.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 5px #6b8e23 outset;
+    border-radius: 15px;
+  }
+
+  ul {
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+    height: auto;
+    width: 100%;
+    gap: 0;
+    position: relative;
+
+    li {
+      display: grid;
+      grid-template-columns: 55% 45%;
+      grid-template-rows: 50px 1fr;
+      border: black double;
+      border-radius: 25px;
+      margin: 5px;
+
+      h3 {
+        grid-area: 1 / 1 / 2 / 2;
+        color: rgb(245, 245, 210);
+        font-size: 250%;
+        margin-bottom: 35px;
+      }
+
+      .img {
+        grid-area: 1 / 2 / 3 / 3;
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 0 25px 25px 0; // match li border-radius
+        overflow: hidden;
+        position: relative;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: inherit; // inherit radius from .img
+      }
+      
+
+
+      p {
+        text-align: justify;
+        font-family: cursive;
+        margin: 15px;
+        margin-right:50px;
+        font-size: 200%;
+        font-weight: bold;
+      }
+      .prix{
+        font-weight: bold;
+        color: rgb(165, 1, 1);
+        font-size: xx-large;
+      }
+    }
+  }
+  #about {
+    border-radius: 15px;
+    margin: 40px;
+    padding: 30px;  
+    font-size: x-large;         // ✅ Makes all text larger
+    line-height: 1.6;           // ✅ Improves readability
+    text-align: center;
+    background-color: #ccc;
+    img {
+      width: 10%;
+      eight: auto;
+      max-width: 80%;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    p {
+      font-weight: bold;
+      font-size: 1.5rem;         // ✅ You can go even larger if needed
+      padding: 10px;
+    }
+  }
+  #Contact{
+    padding: 20px;
+    margin: 20px;
+    background-color: #6b8e23;
+    border-radius: 15px;
+    form {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 30px;
+      background: linear-gradient(to bottom right, #f0f8ff, #e6f0fa);
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-family: "Segoe UI", sans-serif;
+      color: #333;
+    }
+    form label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  form input,
+  form select,
+  form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border 0.3s;
+  }
+  form input:focus,
+  form select:focus,
+  form textarea:focus {
+    border-color: #4a90e2;
+    outline: none;
+  }
+  form textarea {
+    resize: vertical;
+  }
+  form button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  form button:hover {
+    background-color: #357ab7;
+  }
+  h2{
+    text-align: center;
+  }
+  }
+  #order {
+  padding: 20px;
+  margin: 20px;
+  background-color: #6b8e23;
+  border-radius: 15px;
+
+  h2 {
+    background-color: #3e4e1b;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+
+    label,
+    input,
+    select {
+      display: block;
+      width: 100%;
+      font-size: 26px;
+      color: black;
+      font-weight:bold;
+      border: double #333;
+      padding: 10px;
+      border-radius: 15px;
+    }
+
+    input,
+    select {
+      padding: 10px;
+      border-radius: 15px;
+      border: 1px solid #ccc;
+      transition: border 0.3s;
+      
+
+      &:focus {
+        
+        border: 3px solid #4a90e2;
+        outline: none;
+      }
+    }
+    label{
+    display: inline-block;
+    border: 1px solid #333;  /* dark border */
+    
+    border-radius: 15px;       /* optional: rounded corners */
+    margin-bottom: 10px;      /* space below the label */
+    background-color: #3e4e1b; /* optional: light background */
+    width:fit-content;
+    padding: 4px ;
+    padding-right: 50px;
+    color: white;
+    }
+
+    fieldset {
+      border: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      legend {
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        padding: 10px;
+        background-color: #5b6319;
+        color: #fff;
+        border-radius: 8px;
+      }
+
+      .choose {
+        display: grid;
+        grid-template-columns: 100px 1fr 100px;
+        grid-template-rows: auto auto;
+        gap: 10px;
+        align-items: center;
+        padding: 15px;
+        background-color: #869126;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+
+        img {
+          grid-row: span 2;
+          width: 100px;
+          height: auto;
+          border-radius: 8px;
+        }
+
+        h3 {
+          grid-column: 2 / 4;
+          margin: 0;
+          font-size: 1.2em;
+          text-align: center;
+        }
+
+        .checkbox {
+          grid-column: 2;
+          justify-self: start;
+        }
+
+        .number {
+          grid-column: 3;
+          justify-self: start;
+        }
+      }
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: #4a90e2;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #357ab7;
+      }
+    }
+  }
+}
+
+}
+
+
+
+footer {
+  background-color: rgb(3, 99, 99);
+  border-radius: 15px;
+  color: white;
+  padding: 20px 40px;
+  text-align: center;
+  font-size: 18px;
+
+  a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+      color: #b8ffec;
+    }
+  }
+
+  p {
+    margin: 10px 0;
+  }
+}
+
