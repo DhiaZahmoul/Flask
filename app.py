@@ -21,6 +21,8 @@ app.config['DATABASE']="database.sqlite"
 def get_db_connection():
     conn = sqlite3.connect('database.sqlite')  # Path to your DB file
     conn.row_factory = sqlite3.Row  # Optional: to get rows as dict-like objects
+    conn.execute("PRAGMA foreign_keys = ON")
+
     return conn
 
 def add_user_to_db():
@@ -34,6 +36,24 @@ def add_user_to_db():
     conn.commit()
     conn.close()
 
+    msg = Message(
+                subject="Account created",
+                sender=app.config['MAIL_USERNAME'],
+                recipients=[request.form.get("email")]
+            )
+    msg.body = """\
+        Welcome to OmBurger!
+
+        Your account has been successfully created. We’re excited to have you with us!
+
+        If you have any questions or need help, feel free to reach out.
+
+        Enjoy your journey with OmBurger!
+    """
+    mail.send(msg)
+
+
+
 def add_order_to_db():
     conn=get_db_connection()
     cursor=conn.cursor()
@@ -41,6 +61,7 @@ def add_order_to_db():
     email = request.form.get('email')
     cursor.execute('SELECT user_id FROM users WHERE email = ?', (email,))
     user_id=cursor.fetchone()
+    user_id = user_id['user_id'] 
 
     order = {
             "Inta omri": request.form.get('Inta_omri_qty'),
@@ -58,7 +79,7 @@ def add_order_to_db():
     cursor.execute('''
         INSERT INTO orders(payment_method,order_details,order_time,user_id)
                    values(?,?,?,?)
-''',str(payment_method),order,str(order_time),user_id)
+''',(str(payment_method),str(order),str(order_time),user_id))
     conn.commit()
     conn.close()
 
@@ -67,19 +88,33 @@ def add_order_to_db():
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    # Create users table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-                   user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   name TEXT NOT NULL,
-                   lname TEXT NOT NULL,
-                   email TEXT NOT NULL UNIQUE,
-                   password TEXT NOT NULL,
-                   gender TEXT NOT NULL
-                   )
-''')
+            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            lname TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            gender TEXT NOT NULL
+        )
+    ''')
+
+    # Create orders table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS orders (
+            order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            payment_method TEXT NOT NULL,
+            order_details TEXT NOT NULL,
+            order_time TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+        )
+    ''')
+
     conn.commit()
     conn.close()
-
 
 
 
@@ -177,6 +212,7 @@ def order():
             – The Om Burger Team
         '''
         mail.send(msg)
+        add_order_to_db()
 
 
 
