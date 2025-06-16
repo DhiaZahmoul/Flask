@@ -122,7 +122,7 @@ main #about {
 }
 main #about img {
   width: 10%;
-  eight: auto;
+  height: auto;
   max-width: 80%;
   border-radius: 10px;
   -o-object-fit: cover;
@@ -326,4 +326,12 @@ footer a:hover {
 }
 footer p {
   margin: 10px 0;
+}
+
+#accountInfo {
+  position: sticky;
+  top: 100px; /* Adjust depending on header height */
+  width: 300px;
+  height: auto;
+  z-index: 1000;
 }/*# sourceMappingURL=style.css.map */

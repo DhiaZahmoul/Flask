@@ -24,9 +24,18 @@
             Account details
           </a>
         </li>
-        <li><a class="dropdown-item" href="#">Past orders</a></li>
+        <li><a class="dropdown-item" href="/porders" target="_blank">Past orders</a></li>
         <li><a class="dropdown-item" href="/login">Logout</a></li>
       </ul>
+      <div class="collapse ms-3" id="accountInfo">
+      <div class="card card-body text-dark" id="accountInfoCard">
+        Name: {{ user_name }} <br>
+        Last Name : {{last_name}}<br>
+        Email: {{ user_email }}<br>
+        Gender : {{gender}}
+
+      </div>
+    </div>
     </div>
 
     <!-- Right: Navigation -->
@@ -39,15 +48,8 @@
     </nav>
 
     <!-- Sticky Account Info -->
-    <div class="collapse ms-3" id="accountInfo" style="max-width: 300px;">
-      <div class="card card-body text-dark" id="accountInfoCard">
-        Name: {{ user_name }} <br>
-        Last Name : {{last_name}}<br>
-        Email: {{ user_email }}<br>
-        Gender : {{gender}}
-
-      </div>
-    </div>
+    
+    
 
   </div>
 </header>

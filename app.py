@@ -283,7 +283,20 @@ def sign_up():
         return render_template('signup.html')  # show sign-up form
 
 
-    
+@app.route('/porders')
+def porders():
+    conn=get_db_connection()
+    cursor=conn.cursor()
+    user_id=session['user_id']
+    cursor.execute('''
+    SELECT * FROM orders WHERE user_id = ?
+''',(user_id,))
+    orders=cursor.fetchall()
+    conn.close()
+    return render_template('porders.html',orders=orders)
+
+
+
     
 # --- Run the app ---
 if __name__ == '__main__':
