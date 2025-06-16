@@ -60,31 +60,61 @@ def add_user_to_db():
 
 
 def add_order_to_db():
-    conn=get_db_connection()
-    cursor=conn.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
     payment_method = request.form.get('payment_method')
     email = request.form.get('email')
+
+    # Get user_id from email
     cursor.execute('SELECT user_id FROM users WHERE email = ?', (email,))
-    user_id=cursor.fetchone()
-    user_id = user_id['user_id'] 
-
-    order = {
-            "Inta omri": request.form.get('Inta_omri_qty'),
-            "Sirit lhob": request.form.get('Sirit_Lhob_qty'),
-            "Alf lila w lila": request.form.get('Alf_lila_qty'),
-            "Mama zamanha gaya": request.form.get('Mama_qty')
-        }
-
-        
-    order = {k: int(v) for k, v in order.items() if v and int(v) > 0}
-    order=str(order)
+    user_row = cursor.fetchone()
+    user_id = user_row['user_id']
 
     order_time = datetime.now()
-    order_number = f"{randint(0, 9999):04d}"
+    total_price = 0.0
+
+    # Step 1: Insert a blank order (we'll update total later)
     cursor.execute('''
-        INSERT INTO orders(payment_method,order_details,order_time,user_id)
-                   values(?,?,?,?)
-''',(str(payment_method),str(order),str(order_time),user_id))
+        INSERT INTO orders (order_time, payment_method, total_price, user_id)
+        VALUES (?, ?, ?, ?)
+    ''', (str(order_time), payment_method, 0.0, user_id))
+    
+    order_id = cursor.lastrowid  # Get the ID of the new order
+
+    # Step 2: Process each item
+    items = [
+        ('Inta_omri', 'Inta_omri_qty'),
+        ('Sirit_lhob', 'Sirit_Lhob_qty'),
+        ('Alf_lila', 'Alf_lila_qty'),
+        ('mama', 'Mama_qty')
+    ]
+
+    for item_name, field_name in items:
+        qty = request.form.get(field_name)
+        if qty and int(qty) > 0:
+            qty = int(qty)
+
+            # Get item_id and price from menu
+            cursor.execute('SELECT item_id, price FROM menu WHERE name = ?', (item_name,))
+            row = cursor.fetchone()
+            if row:
+                item_id = row['item_id']
+                price = row['price']
+                subtotal = qty * price
+                total_price += subtotal
+
+                # Insert into order_items
+                cursor.execute('''
+                    INSERT INTO order_items (order_id, item_id, quantity)
+                    VALUES (?, ?, ?)
+                ''', (order_id, item_id, qty))
+
+    # Step 3: Update the total_price in the order
+    cursor.execute('''
+        UPDATE orders SET total_price = ? WHERE order_id = ?
+    ''', (total_price, order_id))
+
     conn.commit()
     conn.close()
 
@@ -131,10 +161,8 @@ mail = Mail(app)
 # --- Home Route: Handles Contact Form (form1) ---
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    
     if 'user_id' not in session:
         return redirect('/login')
-    
 
     if request.method == 'POST':
         formID = request.form.get('form_id')
@@ -144,8 +172,6 @@ def home():
             gender = request.form.get('gender')
             email = request.form.get('email')
             message = request.form.get('message')
-            
-
 
             # Send confirmation email
             msg = Message(
@@ -165,7 +191,52 @@ def home():
             mail.send(msg)
             return render_template("thanks.html", user_name=name)
 
-    #return render_template("resto.html",user_name=name,user_email=email,gender=gender,last_name=lname)
+    # If GET or other POST, render the pages below
+    if session['user_id'] == 1:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        day = datetime.now().strftime('%Y-%m-%d')
+
+        cursor.execute('SELECT COUNT(order_id) FROM orders WHERE DATE(order_time) = ?', (day,))
+        count = cursor.fetchone()[0]
+
+        cursor.execute('SELECT SUM(total_price) FROM orders')
+        revenue = cursor.fetchone()[0]
+
+        cursor.execute('SELECT user_id, name, lname, email, gender FROM users')
+        users = cursor.fetchall()
+
+        cursor.execute('SELECT * FROM orders ORDER BY order_time DESC LIMIT 10')
+        orders = cursor.fetchall()
+
+        cursor.execute('SELECT * FROM menu')
+        menu = cursor.fetchall()
+        conn.close()
+
+        return render_template('admin.html', orders_today=count, revenue=revenue, users=users, orders=orders, menu=menu)
+
+    else:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT name, lname, email, gender FROM users WHERE user_id = ?', (session['user_id'],))
+        user_row = cursor.fetchone()
+        conn.close()
+
+        return render_template(
+            "resto.html",
+            user_name=user_row['name'],
+            last_name=user_row['lname'],
+            user_email=user_row['email'],
+            gender=user_row['gender']
+        )
+
+    
+
+
+
+
+
 
 
 
@@ -245,37 +316,26 @@ def order():
 
 
 #------login page------
-@app.route('/login', methods=['POST','GET'])
-def login():
-    if request.method== 'GET':
-        return render_template('login.html')
-    else:
-        user_name= request.form.get('username')
-        password=request.form.get('password')
-        conn=get_db_connection()
-        cursor= conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = ?', (user_name,))
-        row= cursor.fetchone()
-        conn.close()
-        if row and row["password"]==password:
-            session['user_id'] = row['user_id']
-            conn=get_db_connection()
-            cursor=conn.cursor()
-            cursor.execute('''
-                           SELECT email FROM USERS WHERE user_id = ? ''',(session['user_id'],))
-            
 
-            email=cursor.fetchone()
-            email=email['email']
-            cursor.execute('SELECT name, lname, email, gender FROM users WHERE user_id = ?', (session['user_id'],))
-            user_row = cursor.fetchone()
-            name = user_row['name']
-            lname = user_row['lname']
-            email = user_row['email']
-            gender = user_row['gender']
-            return render_template("resto.html",user_name=name,user_email=email,gender=gender,last_name=lname)
-        else:
-            return '''Password incorrect.Try again'''
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    
+    user_name = request.form.get('username')
+    password = request.form.get('password')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE email = ?', (user_name,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row and row["password"] == password:
+        session['user_id'] = row['user_id']
+        return redirect('/')  # ✅ Let '/' route handle role-based rendering
+    else:
+        return 'Password incorrect. Try again'
 
 
  #-------signup page--------   

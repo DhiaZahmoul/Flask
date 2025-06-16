@@ -1,6 +1,6 @@
 # 🍔 OmBurger Web Application
 
-**OmBurger** is a full-stack Flask web application for a fictional burger restaurant. It includes user authentication, order tracking, email notifications, and a simple frontend interface — all built using Python, Flask, SQLite, and Flask-Mail.
+**OmBurger** is a full-stack Flask web application for a fictional burger restaurant. It supports admin and user roles, order management with itemized menus, real-time dashboard insights, email confirmations, and a simple Bootstrap-based UI. Built using Flask, SQLite, and Flask-Mail.
 
 ---
 
@@ -8,34 +8,61 @@
 
 ### 🔐 Authentication
 - User signup with form validation
-- Secure login system with session management
-- Role-independent access (default: general user)
+- Login system with session management
+- Role-based access:  
+  - **Admin (`user_id=1`)**: Access to admin dashboard  
+  - **User**: Redirected to personalized homepage
 
 ### 🧾 Order Management
-- Users can place custom orders through a form
-- Orders include item quantities, payment method, and estimated delivery time
-- Order data is saved in an SQLite database and tied to the logged-in user
+- Users can place custom orders by selecting item quantities
+- Orders saved with:
+  - Individual menu items (linked via foreign keys)
+  - Quantity per item
+  - Total price calculated dynamically
+- Order tracking available in user history (`/porders`)
 
 ### 📧 Email Notifications
 - Welcome email on account creation
-- Order confirmation email with itemized breakdown and estimated delivery time
-- Email notifications sent using Flask-Mail and Gmail SMTP
+- Order confirmation email with:
+  - Breakdown of selected items
+  - Estimated delivery time
+- Emails sent via Flask-Mail and Gmail SMTP (using environment variables)
 
-### 🗃️ Database
-- **SQLite** used for data persistence
-- Two main tables:
-  - `users`: Stores personal and login info
-  - `orders`: Stores order details and links to users via foreign key
-- Foreign key constraints enabled (`ON DELETE CASCADE`)
+### 🧮 Admin Dashboard
+Accessible at `/` when logged in as admin (`user_id == 1`):
+- View total number of orders placed today
+- See overall revenue from all orders
+- View all registered users
+- Preview last 10 recent orders
+- Menu management (edit/delete)
 
-### 🌐 Frontend (SSR)
-- HTML templates rendered using Jinja2
-- Separate pages for:
-  - Signup (`/signup`)
-  - Login (`/login`)
-  - Home/feedback (`/`)
-  - Order summary (`/order`)
-- Basic Bootstrap styling and structured forms
+### 🗃️ Database Schema
+
+#### Tables:
+- `users`: Stores user info (name, email, password, gender)
+- `orders`: Stores order metadata (payment method, timestamp, total, user_id)
+- `order_items`: Maps orders to menu items (order_id, item_id, quantity)
+- `menu`: Stores available food items and their prices
+
+#### Highlights:
+- **Foreign key constraints enabled** with `ON DELETE CASCADE`
+- Data consistency maintained across orders and menu
+
+---
+
+## 🌐 Frontend (Server-Side Rendered)
+
+### Templates:
+- `signup.html`: New user registration
+- `login.html`: User login
+- `resto.html`: Main page for logged-in users
+- `admin.html`: Admin dashboard
+- `order.html`: Order summary
+- `thanks.html`: Confirmation after feedback
+
+### Styling:
+- Responsive Bootstrap-based layout
+- Simple table formatting for menus and dashboards
 
 ---
 
@@ -46,7 +73,35 @@
 - **Flask-Mail**
 - **SQLite3**
 - **Jinja2** templating
-- **HTML/CSS**
+- **HTML/CSS + Bootstrap**
 - **Gmail SMTP** for email delivery
+- **dotenv** for securely managing credentials
 
 ---
+
+## ✅ Testing
+
+Unit tests using `unittest`:
+- Signup, login, order placement, contact form, and order history tested
+- In-memory SQLite database used for test isolation (`:memory:`)
+- Unique test user emails generated to avoid conflicts
+
+---
+
+## 🔐 Security Notes
+
+- **Passwords are currently stored in plaintext** – should be hashed using `werkzeug.security` in production
+- **Email credentials** should be stored in a `.env` file, never pushed to version control
+
+---
+
+## 🚀 Getting Started
+
+### Requirements
+- Python 3.x
+- Flask, Flask-Mail, python-dotenv
+
+### Installation
+
+```bash
+pip install Flask Flask-Mail python-dotenv
