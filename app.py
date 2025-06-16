@@ -3,14 +3,19 @@ from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 from random import randint
 import sqlite3 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load environment variables from .env
+
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
 # --- Flask-Mail Config ---
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'zahmouldhia@gmail.com'
-app.config['MAIL_PASSWORD'] = 'boye tbbt sdra bsod'  # Replace with a safe app password!
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['DATABASE']="database.sqlite"
@@ -19,8 +24,8 @@ app.config['DATABASE']="database.sqlite"
 
 
 def get_db_connection():
-    conn = sqlite3.connect('database.sqlite')  # Path to your DB file
-    conn.row_factory = sqlite3.Row  # Optional: to get rows as dict-like objects
+    conn = sqlite3.connect('database.sqlite') 
+    conn.row_factory = sqlite3.Row  
     conn.execute("PRAGMA foreign_keys = ON")
 
     return conn
@@ -160,12 +165,12 @@ def home():
             mail.send(msg)
             return render_template("thanks.html", user_name=name)
 
-    return render_template("resto.html",user_name=name,user_email=email,gender=gender,last_name=lname)
+    #return render_template("resto.html",user_name=name,user_email=email,gender=gender,last_name=lname)
 
 
 
 
-# --- Order Route: Handles Order Form (form2) ---
+# --- Order Route: Handles Orders ---
 @app.route('/order', methods=['POST'])
 def order():
     formID = request.form.get('form_id')
@@ -282,7 +287,7 @@ def sign_up():
     else:
         return render_template('signup.html')  # show sign-up form
 
-
+#--------view user's orders---------
 @app.route('/porders')
 def porders():
     conn=get_db_connection()

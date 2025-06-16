@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OmBurger Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <header class="bg-dark text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h2>🍔 OmBurger Admin Panel</h2>
+            <div>
+                <span>👤 Admin: zahmouldhia@gmail.com</span>
+                <a href="/login" class="btn btn-danger btn-sm ms-3">🔓 Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-4">
+
+        <!-- Dashboard Summary -->
+        <div class="row text-center mb-4">
+            <div class="col-md-4">
+                <div class="bg-white p-3 rounded shadow-sm">
+                    <h5>🧾 Orders Today</h5>
+                    <p>12</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-white p-3 rounded shadow-sm">
+                    <h5>👥 New Users</h5>
+                    <p>3</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-white p-3 rounded shadow-sm">
+                    <h5>💰 Revenue</h5>
+                    <p>$220.00</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Management -->
+        <section class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h4>🍽️ Menu Items</h4>
+                <a href="/admin/add_item" class="btn btn-success btn-sm">➕ Add New Item</a>
+            </div>
+            <table class="table table-bordered bg-white shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price ($)</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu %}
+                    <tr>
+                        <td>{{ item.item_id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }}</td>
+                        <td><a href="/admin/edit_item/{{ item.item_id }}" class="btn btn-warning btn-sm">✏️</a></td>
+                        <td><a href="/admin/delete_item/{{ item.item_id }}" class="btn btn-danger btn-sm">❌</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- User Management -->
+        <section class="mb-5">
+            <h4>👥 Registered Users</h4>
+            <table class="table table-bordered bg-white shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Orders</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.user_id }}</td>
+                        <td>{{ user.name }} {{ user.lname }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.order_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Order History -->
+        <section>
+            <h4>📦 Recent Orders</h4>
+            <table class="table table-bordered bg-white shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Time</th>
+                        <th>Total ($)</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.order_id }}</td>
+                        <td>{{ order.user_name }}</td>
+                        <td>{{ order.order_time }}</td>
+                        <td>{{ order.total }}</td>
+                        <td><a href="/admin/order/{{ order.order_id }}" class="btn btn-info btn-sm">🔍</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+</body>
+</html>
