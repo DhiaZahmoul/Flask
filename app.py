@@ -117,8 +117,11 @@ def init_db():
     conn.close()
 
 
-
 mail = Mail(app)
+
+
+
+
 
 # --- Home Route: Handles Contact Form (form1) ---
 @app.route('/', methods=['GET', 'POST'])
@@ -136,6 +139,8 @@ def home():
             gender = request.form.get('gender')
             email = request.form.get('email')
             message = request.form.get('message')
+            
+
 
             # Send confirmation email
             msg = Message(
@@ -155,7 +160,9 @@ def home():
             mail.send(msg)
             return render_template("thanks.html", user_name=name)
 
-    return render_template("resto.html")
+    return render_template("resto.html",user_name=name,user_email=email,gender=gender,last_name=lname)
+
+
 
 
 # --- Order Route: Handles Order Form (form2) ---
@@ -229,6 +236,9 @@ def order():
         )
     else:
         return "Invalid form submission", 400
+    
+
+
 #------login page------
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -244,8 +254,21 @@ def login():
         conn.close()
         if row and row["password"]==password:
             session['user_id'] = row['user_id']
+            conn=get_db_connection()
+            cursor=conn.cursor()
+            cursor.execute('''
+                           SELECT email FROM USERS WHERE user_id = ? ''',(session['user_id'],))
+            
 
-            return render_template('resto.html')
+            email=cursor.fetchone()
+            email=email['email']
+            cursor.execute('SELECT name, lname, email, gender FROM users WHERE user_id = ?', (session['user_id'],))
+            user_row = cursor.fetchone()
+            name = user_row['name']
+            lname = user_row['lname']
+            email = user_row['email']
+            gender = user_row['gender']
+            return render_template("resto.html",user_name=name,user_email=email,gender=gender,last_name=lname)
         else:
             return '''Password incorrect.Try again'''
 
